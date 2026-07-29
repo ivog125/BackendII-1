@@ -1,0 +1,11 @@
+node_modules/
+.env
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
