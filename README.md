@@ -57,12 +57,12 @@ proyecto-eventos/
 │   ├── config/              # Configuración centralizada (env, conexión a MongoDB)
 │   ├── routes/               # Definición de rutas por recurso
 │   ├── controllers/          # Controladores asociados a cada ruta
-│   ├── services/              # (vacío) Lógica de negocio — entregas futuras
-│   ├── repositories/          # (vacío) Acceso a datos desacoplado — entregas futuras
-│   ├── dao/                   # (vacío) Data Access Objects — entregas futuras
+│   ├── services/              # Lógica de negocio (p. ej. registro de usuarios)
+│   ├── repositories/          # Acceso a datos desacoplado
+│   ├── dao/                   # Data Access Objects (interacción directa con Mongoose)
 │   ├── models/               # Modelos de Mongoose
 │   ├── middlewares/            # (vacío) Middlewares (auth, validaciones, etc.) — entregas futuras
-│   └── utils/                  # (vacío) Utilidades — entregas futuras
+│   └── utils/                  # Utilidades (hash de contraseñas, etc.)
 ├── .env.example
 ├── .gitignore
 ├── package.json
@@ -71,8 +71,59 @@ proyecto-eventos/
 
 ## Rutas disponibles
 
-| Método | Ruta            | Descripción                                                  |
-|--------|-----------------|---------------------------------------------------------------|
-| GET    | `/api/health`   | Verifica que el servidor está activo.                         |
-| GET    | `/api/events`   | Estructura base del recurso eventos (retorna una lista vacía). |
-| GET    | `/api/sessions` | Estructura base del recurso sesiones (placeholder, sin autenticación aún). |
+| Método | Ruta                     | Descripción                                                  |
+|--------|--------------------------|---------------------------------------------------------------|
+| GET    | `/api/health`            | Verifica que el servidor está activo.                         |
+| GET    | `/api/events`            | Estructura base del recurso eventos (retorna una lista vacía). |
+| GET    | `/api/sessions`          | Estructura base del recurso sesiones (placeholder, sin autenticación aún). |
+| POST   | `/api/sessions/register` | Registra un nuevo usuario.                                     |
+
+### Probar el registro de usuarios (`POST /api/sessions/register`)
+
+Body esperado (JSON):
+
+| Campo        | Tipo   | Requerido | Descripción                                  |
+|--------------|--------|-----------|-----------------------------------------------|
+| `first_name` | string | sí        | Nombre del usuario.                            |
+| `last_name`  | string | sí        | Apellido del usuario.                          |
+| `email`      | string | sí        | Email del usuario (se normaliza a minúsculas). |
+| `password`   | string | sí        | Contraseña (mínimo 8 caracteres).              |
+
+Ejemplo de request:
+
+```bash
+curl -X POST http://localhost:8080/api/sessions/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "Ada",
+    "last_name": "Lovelace",
+    "email": "ada@example.com",
+    "password": "supersecreta"
+  }'
+```
+
+Respuesta exitosa (`201 Created`):
+
+```json
+{
+  "status": "success",
+  "payload": {
+    "id": "65123abc...",
+    "first_name": "Ada",
+    "last_name": "Lovelace",
+    "email": "ada@example.com",
+    "role": "user"
+  }
+}
+```
+
+Ante un error de validación (campos faltantes, formato de email inválido, contraseña corta o email ya registrado), la respuesta tiene la forma:
+
+```json
+{
+  "status": "error",
+  "message": "Descripción del error"
+}
+```
+
+con el código HTTP correspondiente (`400` para validaciones, `409` si el email ya está registrado).
