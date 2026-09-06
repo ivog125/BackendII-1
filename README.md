@@ -2,7 +2,7 @@
 
 Plataforma de Eventos e Inscripciones — backend base construido con Node.js y Express.
 
-Esta es la **primera entrega** de un proyecto incremental. El alcance de esta etapa es exclusivamente la base arquitectónica: configuración del servidor, estructura de carpetas por capas y rutas mínimas de verificación. **No incluye** autenticación, JWT, roles, tickets, inscripciones ni lógica de negocio; esas funcionalidades se desarrollarán en entregas posteriores.
+Este proyecto se desarrolla de forma incremental, en entregas sucesivas. La primera entrega cubrió la base arquitectónica (configuración del servidor, estructura de carpetas por capas y rutas mínimas de verificación). Esta segunda entrega suma el registro seguro de usuarios: validación de datos, normalización de email, hash de contraseñas con bcrypt y persistencia en MongoDB. Todavía no incluye login, JWT ni lógica de tickets/inscripciones; esas funcionalidades se desarrollarán en entregas posteriores.
 
 ## Temática elegida
 
